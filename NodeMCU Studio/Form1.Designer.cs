@@ -44,7 +44,12 @@
             this.savefile = new System.Windows.Forms.Button();
             this.testtext = new System.Windows.Forms.TextBox();
             this.readlua = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.删除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
+            this.idname = new System.Windows.Forms.TextBox();
             this.groupBox3.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // textbox1
@@ -71,6 +76,7 @@
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(372, 14);
             this.progressBar1.TabIndex = 2;
+            this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
             // groupBox3
             // 
@@ -120,6 +126,7 @@
             this.波特率cbox.Name = "波特率cbox";
             this.波特率cbox.Size = new System.Drawing.Size(60, 20);
             this.波特率cbox.TabIndex = 5;
+            this.波特率cbox.SelectedIndexChanged += new System.EventHandler(this.波特率cbox_SelectedIndexChanged);
             // 
             // 连接but
             // 
@@ -141,6 +148,7 @@
             this.filelist.TabIndex = 13;
             this.filelist.MouseClick += new System.Windows.Forms.MouseEventHandler(this.filelist_MouseClick);
             this.filelist.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.filelist_MouseDoubleClick);
+            this.filelist.MouseUp += new System.Windows.Forms.MouseEventHandler(this.filelist_MouseUp);
             // 
             // openfeil
             // 
@@ -164,7 +172,7 @@
             // 
             // testtext
             // 
-            this.testtext.Location = new System.Drawing.Point(699, 16);
+            this.testtext.Location = new System.Drawing.Point(699, 12);
             this.testtext.Multiline = true;
             this.testtext.Name = "testtext";
             this.testtext.Size = new System.Drawing.Size(372, 282);
@@ -172,7 +180,7 @@
             // 
             // readlua
             // 
-            this.readlua.Location = new System.Drawing.Point(639, 264);
+            this.readlua.Location = new System.Drawing.Point(106, 170);
             this.readlua.Name = "readlua";
             this.readlua.Size = new System.Drawing.Size(54, 23);
             this.readlua.TabIndex = 17;
@@ -180,11 +188,43 @@
             this.readlua.UseVisualStyleBackColor = true;
             this.readlua.Click += new System.EventHandler(this.readlua_Click);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.删除ToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(101, 26);
+            // 
+            // 删除ToolStripMenuItem
+            // 
+            this.删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
+            this.删除ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.删除ToolStripMenuItem.Text = "删除";
+            this.删除ToolStripMenuItem.Click += new System.EventHandler(this.删除ToolStripMenuItem_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 147);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 12);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "芯片ID：";
+            // 
+            // idname
+            // 
+            this.idname.Location = new System.Drawing.Point(60, 143);
+            this.idname.Name = "idname";
+            this.idname.Size = new System.Drawing.Size(100, 21);
+            this.idname.TabIndex = 21;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1082, 320);
+            this.ClientSize = new System.Drawing.Size(698, 321);
+            this.Controls.Add(this.idname);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.readlua);
             this.Controls.Add(this.testtext);
             this.Controls.Add(this.savefile);
@@ -200,6 +240,7 @@
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -222,6 +263,10 @@
         private System.Windows.Forms.Button savefile;
         private System.Windows.Forms.TextBox testtext;
         private System.Windows.Forms.Button readlua;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem 删除ToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox idname;
     }
 }
 
