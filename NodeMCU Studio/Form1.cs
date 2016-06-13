@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,7 +21,7 @@ namespace NodeMCU_Studio
         {
             InitializeComponent();
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            //this.FormBorderStyle = FormBorderStyle.FixedSingle;
             
             //端口cbox.SelectedIndex = 0;
         }
@@ -28,14 +29,26 @@ namespace NodeMCU_Studio
         private void Form1_Load(object sender, EventArgs e)
         {
             //filelist.ContextMenuStrip = contextMenuStrip1;
+            ravetext.ForeColor = Color.GreenYellow;
+            ravetext.BackColor = Color.Black;
+            textbox1.BackColor = Color.Black;
+            textbox1.ForeColor = Color.GreenYellow;
+            textbox1.ScrollBars = ScrollBars.Both;
+            ravetext.ScrollBars = ScrollBars.Both;
+
+            textBox2.Text = "printok()";
+            textBox3.Text = "file.open(\"app.lua\",\"r\")";
+            textBox4.Text = "file.close()";
+            textBox5.Text = "print(file.readline())";
             this.Text = "NodeMCU Studio";
+
+            SSIDtxtbox.Text = "TP-LINK-XSSR";
+            Passwordtxtbox.Text = "942266575";
 
             波特率cbox.Items.Add("9600");
             波特率cbox.Items.Add("115200");
-            波特率cbox.SelectedIndex = 0;
+            波特率cbox.SelectedIndex = 1;
             //downloadbut.Enabled = false;
-            textbox1.ScrollBars = ScrollBars.Both;
-            testtext.ScrollBars = ScrollBars.Both;
             serialPort1.DataReceived += new SerialDataReceivedEventHandler(portDataReceived);
 
             foreach (string s in SerialPort.GetPortNames())
@@ -53,7 +66,7 @@ namespace NodeMCU_Studio
               {
                   
                       serialPort1.WriteLine(portbuf[i]);
-                     // testtext.Text += (portbuf[i] + "\r\n");
+                      ravetext.Text += (portbuf[i] + "\r\n");
                   i++;
                   //serialPort1.WriteLine("print(\"a\")");
                   //if (readbuf.IndexOf("a")!=-1)
@@ -78,6 +91,13 @@ namespace NodeMCU_Studio
                          break;
                      case 1:
                          serialPort1.WriteLine("print(node.chipid())");
+                         pos++;
+                         if(pos>=5)
+                         {
+                             pos = 0;
+                             readmode = 0;
+                             MessageBox.Show("无法读取ID", "无法读取ID");
+                         }
                          break;
                      case 2:
                          serialPort1.WriteLine(portbuf[portint]);
@@ -85,12 +105,17 @@ namespace NodeMCU_Studio
                      case 3:
                          serialPort1.WriteLine(portbuf[portint]);
                          break;
+                     case 4:
+                         serialPort1.WriteLine("wifi.sta.config(\"" + SSIDtxtbox.Text + "\",\"" + Passwordtxtbox.Text + "\")");
+                         serialPort1.WriteLine("saveConfig()");
+                         break;
                  }
              });
             ti.Start();
 
             
         }
+        int pos = 0;
         int portint=0;
 
         int i = 0;
@@ -103,27 +128,60 @@ namespace NodeMCU_Studio
             byte[] buf = new byte[1024];
             int len = serialPort1.Read(buf, 0, 1024);
             readbuf = Encoding.Default.GetString(buf);
-            testtext.Text += readbuf;
+            ravetext.Text += readbuf;
+            ravetext.Focus();
+            ravetext.Select(ravetext.TextLength, 0);
+            ravetext.ScrollToCaret();
             switch (readmode)
             {
                 case 1:
-                    readbuf = readbuf.Replace("print(node.chipid())", "");
-                    readbuf = readbuf.Replace("> ", "");
-                    byte[] bytes = Encoding.ASCII.GetBytes(readbuf);
-                    if (bytes.Length < 8) break;
-                    uint s = 0;
-                    int i;
-                    for(i=0;i<8;i++)
+                    string num="";
+                    for(int i=0;i<readbuf.Length;i++)
                     {
-                        if (bytes[i] < 0x30 || bytes[i] > 0x39)
-                            break;
+                        if(char.IsDigit(readbuf,i))
+                        {
+                            num += readbuf[i];
+                        }
+
                     }
-                    if(i>=8)
+                    if (num.Length >= 3)
                     {
-                        idname.Text = readbuf;
+                        int idh = int.Parse(num);
+                        idname.Text = idh.ToString();
                         readmode = 0;
+                            
                     }
-                    
+
+
+                    //readbuf = readbuf.Replace("print(node.chipid())", "");
+                    //readbuf = readbuf.Replace("> ", "");
+
+                    //char.isd
+                    //int idh = int.Parse(readbuf);
+                    //idname.Text = idh.ToString();
+
+
+                    //int idh = Convert.ToInt32(readbuf);
+                    //idname.Text = idh.ToString();
+                    //byte[] bytes = Encoding.ASCII.GetBytes(readbuf);
+                    ////if (bytes.Length < 7) break;
+                    //int i;
+                    //for (i = 0; i < 7; i++)
+                    //{
+                    //    if (bytes[i] < 0x30 || bytes[i] > 0x39)
+                    //        break;
+                    //}
+                    //for (i = 0; i < 8; i++)
+                    //{
+                    //    if (bytes[i] < 0x30 || bytes[i] > 0x39)
+                    //        break;
+                    //}
+                    //if (i >= 7||i>=8)
+                    //{
+                    //    idname.Text = readbuf;
+                    //    readmode = 0;
+                    //}
+
                     break;
                 case 2:
                     //readbuf = readbuf.Replace(portbuf[portint], "");
@@ -146,9 +204,14 @@ namespace NodeMCU_Studio
                     {
                         readmode = 2;
                     }
-
-
                     break;
+                case 4:
+                    if(readbuf.IndexOf("ok")!=-1)
+                    {
+                        readmode = 0;
+                    }
+                    break;
+
             }
 
             //if(readbuf.IndexOf("a")!=-1)
@@ -283,7 +346,7 @@ namespace NodeMCU_Studio
            
             serialPort1.BaudRate = Convert.ToInt32(波特率cbox.Text, 10);
 
-            testtext.Clear();
+            ravetext.Clear();
             text[filelist.SelectedIndex] = textbox1.Text;
             string strtext=textbox1.Text;
             strtext = strtext.Replace("\"","\\\"");
@@ -364,7 +427,10 @@ namespace NodeMCU_Studio
         {
             idname.Clear();
             if(serialPort1.IsOpen==true)
-            readmode = 1;
+            {
+                readmode = 1;
+                pos = 0;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -439,6 +505,78 @@ try
             }
             
             
+        }
+
+        //ArrayList
+
+        List<string> ssidpass = new List<string>();
+        private void SaveSSID_Click(object sender, EventArgs e)
+        {
+            if(serialPort1.IsOpen==true&&readmode==0)
+            {
+                //ssidpass[0] = SSIDtxtbox.Text;
+                //ssidpass[1] = Passwordtxtbox.Text;
+                
+                //serialPort1.WriteLine("wifi.sta.config(\""+ SSIDtxtbox.Text+"\",\""+ Passwordtxtbox.Text+"\")");
+                //serialPort1.WriteLine("saveConfig()");
+                readmode = 4;
+            }
+        }
+
+        private void cleartest_Click(object sender, EventArgs e)
+        {
+            ravetext.Text = "";
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox2.Text);
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox3.Text);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox5.Text);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox4.Text);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox7.Text);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox6.Text);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox9.Text);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox8.Text);
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox11.Text);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine(textBox10.Text);
         }
     }
 }
