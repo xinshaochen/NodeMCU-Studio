@@ -61,7 +61,7 @@ namespace NodeMCU_Studio
 
 
 
-            t.Interval = 200;
+            t.Interval = 180;
             t.Tick += new EventHandler((object s, EventArgs ex) =>
               {
                   
@@ -349,22 +349,23 @@ namespace NodeMCU_Studio
             ravetext.Clear();
             text[filelist.SelectedIndex] = textbox1.Text;
             string strtext=textbox1.Text;
+            strtext = strtext.Replace("\\", "\\\\");
             strtext = strtext.Replace("\"","\\\"");
             string[] ContenLines = strtext.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);//忽略空行
             
             portbuf.Clear();
-            portbuf.Add("print(file.remove(\"" + filelist.SelectedItem + "\"))");
-            portbuf.Add("print(file.open(\"" + filelist.SelectedItem + "\",\"w+\"))");
-
-
+            //portbuf.Add("print(file.remove(\"" + filelist.SelectedItem + "\"))");
+            //portbuf.Add("print(file.open(\"" + filelist.SelectedItem + "\",\"w+\"))");
+            portbuf.Add("file.remove(\"" + filelist.SelectedItem + "\")");
+            portbuf.Add("file.open(\"" + filelist.SelectedItem + "\",\"w+\")");
 
             //testtext.Text += "print(file.remove(\"" + filelist.SelectedItem + "\"))"+"\r\n";
             // testtext.Text += "print(file.open(\"" + filelist.SelectedItem + "\",\"w+\"))" + "\r\n";
 
 
             //serialPort1.WriteLine("print(file.remove(\"" + filelist.SelectedItem + "\"))");
-                
-            
+
+
             //serialPort1.WriteLine("print(file.open(\"" + filelist.SelectedItem + "\",\"w+\"))");
 
 
@@ -372,13 +373,14 @@ namespace NodeMCU_Studio
             {
                 //testtext.Text += "print(file.writeline(\"" + str + "\"))" + "\r\n";
                 //serialPort1.WriteLine("print(file.writeline(\"" + str + "\"))");
-                portbuf.Add("print(file.writeline(\"" + str + "\"))");
+                //portbuf.Add("print(file.writeline(\"" + str + "\"))");
+                portbuf.Add("file.writeline(\"" + str + "\")");
             }
 
-            portbuf.Add("print(file.close())");
-
+            //portbuf.Add("print(file.close())");
+            portbuf.Add("file.close()");
+            //portbuf.Add("node.restart()");
             portbuf.Add("node.restart()");
-
             //testtext.Text += "print(file.close())";
 
             //serialPort1.WriteLine("print(file.close())");
